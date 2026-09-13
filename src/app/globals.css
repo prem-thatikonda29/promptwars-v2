@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Official Google Palette Tokens */
+  --google-blue: #1A73E8;
+  --google-blue-hover: #1557B0;
+  --google-blue-bg: #E8F0FE;
+  
+  --google-red: #D93025;
+  --google-red-hover: #B31412;
+  --google-red-bg: #FCE8E6;
+  
+  --google-yellow: #F9AB00;
+  --google-yellow-bg: #FEF7E0;
+  
+  --google-green: #188038;
+  --google-green-hover: #13652B;
+  --google-green-bg: #E6F4EA;
+
+  --bg-main: #F8F9FA;
+  --card-bg: #FFFFFF;
+  --text-main: #202124;
+  --text-sub: #5F6368;
+  --text-muted: #80868B;
+  --border-color: #DADCE0;
+  --border-subtle: #E8EAED;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: -0.015em;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+
+/* Google 4-Color Accent Line */
+.google-color-bar {
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(
+    90deg, 
+    #4285F4 0%, #4285F4 25%, 
+    #EA4335 25%, #EA4335 50%, 
+    #FBBC04 50%, #FBBC04 75%, 
+    #34A853 75%, #34A853 100%
+  );
+}
+
+/* Compact Bento Grid System */
+.google-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.google-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1rem;
+  transition: all 0.15s ease-in-out;
+}
+
+.google-card:hover {
+  border-color: #A0C3FF;
+  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.08);
+}
+
+/* Pulse animation for live updates */
+@keyframes googlePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.96); }
+}
+
+.animate-pulse-live {
+  animation: googlePulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* Clean Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
