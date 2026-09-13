@@ -99,11 +99,11 @@ export function ZoneMapModal({ zone, userLocation, isOpen, onClose }: ZoneMapMod
 
   if (!isOpen || !mounted || !zone.lat || !zone.lng || isNaN(zone.lat) || isNaN(zone.lng)) return null;
 
-  const center: [number, number] = userLocation
+  const center: [number, number] = userLocation && userLocation.lat && userLocation.lng
     ? [(userLocation.lat + zone.lat) / 2, (userLocation.lng + zone.lng) / 2]
     : [zone.lat, zone.lng];
 
-  const directDistance = userLocation
+  const directDistance = userLocation && userLocation.lat && userLocation.lng
     ? calculateDistance(userLocation.lat, userLocation.lng, zone.lat, zone.lng)
     : 0;
 
@@ -127,7 +127,7 @@ export function ZoneMapModal({ zone, userLocation, isOpen, onClose }: ZoneMapMod
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4 animate-fade-in">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[#E8EAED]">
           <div className="flex items-center gap-3">
@@ -148,15 +148,15 @@ export function ZoneMapModal({ zone, userLocation, isOpen, onClose }: ZoneMapMod
         </div>
 
         {/* Map */}
-        <div className="flex-1 min-h-[400px]">
+        <div className="flex-1 min-h-[300px] max-h-[400px]">
           <MapContainer
             center={center}
             zoom={15}
             style={{ height: "100%", width: "100%" }}
           >
             <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
             <MapUpdater center={center} zoom={15} />
             <Marker position={[zone.lat, zone.lng]} icon={ZONE_MARKER_ICON}>

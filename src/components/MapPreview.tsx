@@ -56,7 +56,8 @@ export function MapPreview({ zone, userLocation, onClick }: MapPreviewProps) {
         touchZoom={false}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <Marker position={[zone.lat, zone.lng]}>
           <Popup>{zone.name}</Popup>
