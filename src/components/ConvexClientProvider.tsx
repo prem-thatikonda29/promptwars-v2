@@ -1,7 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useRef } from "react";
-import { ConvexProvider, ConvexReactClient } from "convex/react";
+import React, { createContext, useContext, useEffect, useState, useRef, useMemo } from "react";
+import { ConvexProvider, ConvexReactClient, useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { Zone, Session, AlertItem, AnnouncementItem, ZoneType } from "@/types";
 
 export type { Zone, Session, AlertItem, AnnouncementItem, ZoneType };
@@ -94,6 +95,63 @@ interface SmartEventStore {
 }
 
 const StoreContext = createContext<SmartEventStore | null>(null);
+
+function ConvexQueryProvider({ children }: { children: React.ReactNode }) {
+  const convexZones = useQuery(api.zones.list);
+  const convexSessions = useQuery(api.sessions.listWithZones);
+  
+  const { zones, sessions, alerts, announcements, triggerSos, resolveAlert, broadcastAnnouncement, seedEventData } = useSmartEventStore();
+  
+  const effectiveZones = useMemo(() => {
+    if (convexZones !== undefined) {
+      return convexZones.map(z => ({
+        _id: z._id,
+        id: z._id,
+        name: z.name,
+        type: z.type as ZoneType,
+      }));
+    }
+    return zones;
+  }, [convexZones, zones]);
+  
+  const effectiveSessions = useMemo(() => {
+    if (convexSessions !== undefined) {
+      return convexSessions.map(s => ({
+        _id: s._id,
+        id: s._id,
+        name: s.name,
+        title: s.name,
+        time: s.time,
+        zoneId: s.zoneId,
+        zone: s.zone ? {
+          _id: s.zone._id,
+          id: s.zone._id,
+          name: s.zone.name,
+          type: s.zone.type as ZoneType,
+        } : null,
+        tags: s.tags,
+      }));
+    }
+    return sessions;
+  }, [convexSessions, sessions]);
+  
+  const value = useMemo(() => ({
+    zones: effectiveZones,
+    sessions: effectiveSessions,
+    alerts,
+    announcements,
+    triggerSos,
+    resolveAlert,
+    broadcastAnnouncement,
+    seedEventData,
+  }), [effectiveZones, effectiveSessions, alerts, announcements, triggerSos, resolveAlert, broadcastAnnouncement, seedEventData]);
+  
+  return (
+    <StoreContext.Provider value={value}>
+      {children}
+    </StoreContext.Provider>
+  );
+}
 
 const STORAGE_KEY = "smart_event_state_v1";
 const BROADCAST_CHANNEL_NAME = "smart_event_realtime_channel";
@@ -220,6 +278,14 @@ export function ConvexClientProvider({ children }: { children: React.ReactNode }
   };
 
   const seedEventData = async (): Promise<void> => {
+    if (convexClient) {
+      try {
+        await convexClient.mutation(api.seed.seedData, {});
+      } catch (e) {
+        console.error("Convex seed failed, falling back to local seed:", e);
+      }
+    }
+    
     setZones(DEFAULT_ZONES);
     setSessions(DEFAULT_SESSIONS);
     saveAndBroadcast({ zones: DEFAULT_ZONES, sessions: DEFAULT_SESSIONS });
@@ -239,7 +305,11 @@ export function ConvexClientProvider({ children }: { children: React.ReactNode }
   if (convexClient) {
     return (
       <ConvexProvider client={convexClient}>
-        <StoreContext.Provider value={storeValue}>{children}</StoreContext.Provider>
+        <StoreContext.Provider value={storeValue}>
+          <ConvexQueryProvider>
+            {children}
+          </ConvexQueryProvider>
+        </StoreContext.Provider>
       </ConvexProvider>
     );
   }
