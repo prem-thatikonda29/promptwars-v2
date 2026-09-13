@@ -1,7 +1,7 @@
 export const DEFAULT_VENUE_LOCATION = {
-  lat: 37.7749,
-  lng: -122.4194,
-  name: "Google Developer Summit Hall - San Francisco",
+  lat: 19.1700,
+  lng: 72.8547,
+  name: "NESCO Hall 5 - Goregaon, Mumbai",
 };
 
 export const PROXIMITY_THRESHOLD_METERS = 50;

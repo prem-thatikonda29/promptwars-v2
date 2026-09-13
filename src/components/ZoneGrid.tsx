@@ -89,12 +89,12 @@ export function ZoneGrid() {
         },
         () => {
           // Use default location if geolocation fails
-          setUserLocation({ lat: 37.7849, lng: -122.4004 });
+          setUserLocation({ lat: 19.1700, lng: 72.8547 });
         },
         { timeout: 5000 }
       );
     } else {
-      setUserLocation({ lat: 37.7849, lng: -122.4004 });
+      setUserLocation({ lat: 19.1700, lng: 72.8547 });
     }
   }, []);
 

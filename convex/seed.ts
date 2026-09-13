@@ -13,9 +13,9 @@ export const seedData = mutation({
       await ctx.db.delete(s._id);
     }
 
-    // Default venue location (San Francisco Convention Center)
-    const defaultVenueLat = 37.7849;
-    const defaultVenueLng = -122.4004;
+    // Default venue location (NESCO Hall 5, Goregaon, Mumbai)
+    const defaultVenueLat = 19.1700;
+    const defaultVenueLng = 72.8547;
 
     // Generate zone coordinates in a fixed distance ring pattern
     const venueCoords = generateVenueCoordinates(defaultVenueLat, defaultVenueLng);
