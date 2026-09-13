@@ -35,6 +35,10 @@ export interface AlertItem {
   status: "open" | "resolved";
   tag: "initial" | "repeated";
   createdAt: number;
+  nearestZone?: {
+    name: string;
+    distance: number;
+  } | null;
 }
 
 export interface AnnouncementItem {

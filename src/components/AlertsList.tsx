@@ -112,6 +112,15 @@ function AlertGroupCard({ group, onResolve, onResolveAll }: {
               <span className="text-[10px] text-[#80868B] font-sans font-normal ml-1">(centroid of {group.alerts.length} signals)</span>
             )}
           </p>
+          {group.alerts[0]?.nearestZone && (
+            <p className="text-xs font-semibold text-[#D93025] flex items-center gap-1 mt-1">
+              <span className="inline-block w-2 h-2 rounded-full bg-[#D93025]" />
+              Nearest Zone: {group.alerts[0].nearestZone.name}
+              <span className="text-[10px] text-[#5F6368] font-normal ml-1">
+                ({Math.round(group.alerts[0].nearestZone.distance)}m away)
+              </span>
+            </p>
+          )}
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
@@ -244,6 +253,11 @@ export function AlertsList() {
                   <span className="flex items-center gap-1.5 font-mono text-[11px]">
                     <CheckCircle2 className="w-3.5 h-3.5 text-[#188038]" />
                     Resolved: {alert.lat.toFixed(4)}, {alert.lng.toFixed(4)}
+                    {alert.nearestZone && (
+                      <span className="text-[10px] font-sans font-semibold text-[#188038] ml-1">
+                        @ {alert.nearestZone.name}
+                      </span>
+                    )}
                     {alert.tag === "repeated" && (
                       <span className="text-[9px] bg-[#E8F0FE] text-[#1A73E8] px-1 rounded">follow-up</span>
                     )}

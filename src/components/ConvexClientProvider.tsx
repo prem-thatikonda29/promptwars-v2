@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState, useRef, useMemo 
 import { ConvexProvider, ConvexReactClient, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Zone, Session, AlertItem, AnnouncementItem, ZoneType } from "@/types";
+import { findNearestZone } from "@/lib/venueCoordinates";
 
 export type { Zone, Session, AlertItem, AnnouncementItem, ZoneType };
 
@@ -257,6 +258,13 @@ export function ConvexClientProvider({ children }: { children: React.ReactNode }
   };
 
   const triggerSos = async (lat: number, lng: number, tag: "initial" | "repeated" = "initial"): Promise<string> => {
+    // Calculate nearest zone
+    const zoneData = zones
+      .filter(z => z.lat !== undefined && z.lng !== undefined)
+      .map(z => ({ name: z.name, lat: z.lat!, lng: z.lng! }));
+    
+    const nearestZone = findNearestZone(lat, lng, zoneData);
+    
     const newAlert: AlertItem = {
       _id: `alert-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       lat,
@@ -264,6 +272,7 @@ export function ConvexClientProvider({ children }: { children: React.ReactNode }
       status: "open",
       tag,
       createdAt: Date.now(),
+      nearestZone,
     };
     const updated = [newAlert, ...alerts];
     setAlerts(updated);

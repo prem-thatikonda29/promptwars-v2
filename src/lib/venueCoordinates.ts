@@ -63,6 +63,31 @@ export function calculateDistance(
 }
 
 /**
+ * Find the nearest zone to a given location.
+ * Returns the zone name and distance in meters.
+ */
+export function findNearestZone(
+  lat: number,
+  lng: number,
+  zones: Array<{ name: string; lat: number; lng: number }>
+): { name: string; distance: number } | null {
+  if (!zones || zones.length === 0) return null;
+
+  let nearestZone = null;
+  let minDistance = Infinity;
+
+  for (const zone of zones) {
+    const distance = calculateDistance(lat, lng, zone.lat, zone.lng);
+    if (distance < minDistance) {
+      minDistance = distance;
+      nearestZone = { name: zone.name, distance };
+    }
+  }
+
+  return nearestZone;
+}
+
+/**
  * Generate venue zone coordinates in a fixed distance ring pattern.
  * Zones are placed at different distances and bearings from the user.
  */
