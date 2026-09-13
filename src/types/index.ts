@@ -1,4 +1,4 @@
-export type ZoneType = "session" | "networking" | "food" | "sponsor" | "info" | "first_aid" | "stage" | "restroom" | "foodcourt" | "helpdesk" | "firstaid";
+export type ZoneType = "session" | "networking" | "food" | "sponsor" | "info" | "stage" | "restroom" | "foodcourt" | "helpdesk" | "firstaid";
 
 export interface Zone {
   _id?: string;

@@ -109,28 +109,28 @@ export function ZoneGrid() {
   };
 
   return (
-    <div className="flex flex-col gap-2.5">
+    <section className="flex flex-col gap-2.5" aria-label="Venue zones">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-[#1A73E8]" />
+          <MapPin className="w-4 h-4 text-[#1A73E8]" aria-hidden="true" />
           <h2 className="text-base font-bold text-[#202124] tracking-tight">Venue Zones</h2>
         </div>
         <Link
           href="/schedule"
           className="flex items-center gap-1.5 text-xs font-semibold text-[#1A73E8] bg-[#E8F0FE] hover:bg-[#D2E3FC] border border-[#D2E3FC] px-3 py-1.5 rounded-full transition-colors cursor-pointer"
         >
-          <Calendar className="w-3.5 h-3.5" />
+          <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
           View Schedule
         </Link>
       </div>
 
-      <div className="google-bento-grid">
+      <div className="google-bento-grid" role="list" aria-label="Available zones">
         {zones.map((zone) => {
           const config = getZoneConfig(zone.type);
           return (
-            <div key={zone._id || zone.id || zone.name} className="google-card flex flex-col justify-between gap-3 overflow-hidden">
+            <article key={zone._id || zone.id || zone.name} className="google-card flex flex-col justify-between gap-3 overflow-hidden" role="listitem">
               <div className="flex items-center justify-between">
-                <div className={`p-2 rounded-lg ${config.bg} ${config.border} border`}>
+                <div className={`p-2 rounded-lg ${config.bg} ${config.border} border`} aria-hidden="true">
                   {config.icon}
                 </div>
                 <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${config.bg} ${config.color}`}>
@@ -141,7 +141,7 @@ export function ZoneGrid() {
               <div>
                 <h3 className="text-sm font-bold text-[#202124] tracking-tight">{zone.name}</h3>
                 <p className="text-[11px] text-[#5F6368] mt-0.5 flex items-center gap-1">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#188038]" />
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#188038]" aria-hidden="true" />
                   Open & Operational
                 </p>
               </div>
@@ -157,11 +157,12 @@ export function ZoneGrid() {
               <button
                 onClick={() => handleZoneClick(zone)}
                 className="flex items-center justify-center gap-2 w-full px-3 py-2 text-xs font-semibold text-[#1A73E8] bg-[#E8F0FE] hover:bg-[#D2E3FC] border border-[#D2E3FC] rounded-lg transition-colors cursor-pointer"
+                aria-label={`View map and directions to ${zone.name}`}
               >
-                <Navigation className="w-3.5 h-3.5" />
+                <Navigation className="w-3.5 h-3.5" aria-hidden="true" />
                 View Map & Directions
               </button>
-            </div>
+            </article>
           );
         })}
       </div>
@@ -175,6 +176,6 @@ export function ZoneGrid() {
           onClose={handleCloseModal}
         />
       )}
-    </div>
+    </section>
   );
 }

@@ -126,24 +126,31 @@ export function ZoneMapModal({ zone, userLocation, isOpen, onClose }: ZoneMapMod
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4 animate-fade-in">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
+    <div 
+      className="fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4 animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="zone-map-modal-title"
+      onClick={onClose}
+    >
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[#E8EAED]">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#E8F0FE] text-[#1A73E8] rounded-lg">
+            <div className="p-2 bg-[#E8F0FE] text-[#1A73E8] rounded-lg" aria-hidden="true">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-[#202124]">{zone.name}</h2>
+              <h2 id="zone-map-modal-title" className="text-base font-bold text-[#202124]">{zone.name}</h2>
               <p className="text-xs text-[#5F6368]">Walking directions from your location</p>
             </div>
           </div>
           <button
             onClick={onClose}
             className="p-2 text-[#80868B] hover:text-[#202124] hover:bg-[#F1F3F4] rounded-lg transition-colors cursor-pointer"
+            aria-label="Close map modal"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -177,29 +184,29 @@ export function ZoneMapModal({ zone, userLocation, isOpen, onClose }: ZoneMapMod
         </div>
 
         {/* Info Panel */}
-        <div className="p-4 border-t border-[#E8EAED] bg-[#F8F9FA]">
+        <div className="p-4 border-t border-[#E8EAED] bg-[#F8F9FA]" role="region" aria-label="Route information">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-6">
               {route ? (
                 <>
                   <div className="flex items-center gap-2">
-                    <Navigation className="w-4 h-4 text-[#1A73E8]" />
+                    <Navigation className="w-4 h-4 text-[#1A73E8]" aria-hidden="true" />
                     <span className="text-sm font-semibold text-[#202124]">
                       {formatDistance(route.distance)}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-[#5F6368]" />
+                    <Clock className="w-4 h-4 text-[#5F6368]" aria-hidden="true" />
                     <span className="text-sm text-[#5F6368]">
                       {formatDuration(route.duration)} walk
                     </span>
                   </div>
                 </>
               ) : loadingRoute ? (
-                <span className="text-sm text-[#5F6368]">Calculating route...</span>
+                <span className="text-sm text-[#5F6368]" role="status">Calculating route...</span>
               ) : (
                 <div className="flex items-center gap-2">
-                  <Navigation className="w-4 h-4 text-[#80868B]" />
+                  <Navigation className="w-4 h-4 text-[#80868B]" aria-hidden="true" />
                   <span className="text-sm text-[#80868B]">
                     {directDistance > 0 ? `${formatDistance(directDistance)} direct` : "Location unavailable"}
                   </span>
@@ -211,8 +218,9 @@ export function ZoneMapModal({ zone, userLocation, isOpen, onClose }: ZoneMapMod
               <button
                 onClick={openInMaps}
                 className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#1A73E8] hover:bg-[#1557B0] rounded-lg transition-colors cursor-pointer"
+                aria-label={`Open directions to ${zone.name} in Google Maps`}
               >
-                <ExternalLink className="w-4 h-4" />
+                <ExternalLink className="w-4 h-4" aria-hidden="true" />
                 Open in Maps
               </button>
             )}

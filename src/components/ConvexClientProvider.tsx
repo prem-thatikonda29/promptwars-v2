@@ -169,11 +169,25 @@ function ConvexQueryProvider({ children }: { children: React.ReactNode }) {
 const STORAGE_KEY = "smart_event_state_v1";
 const BROADCAST_CHANNEL_NAME = "smart_event_realtime_channel";
 
+function generateId(prefix: string): string {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+}
+
 export function ConvexClientProvider({ children }: { children: React.ReactNode }) {
   const [zones, setZones] = useState<Zone[]>(DEFAULT_ZONES);
   const [sessions, setSessions] = useState<Session[]>(DEFAULT_SESSIONS);
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [announcements, setAnnouncements] = useState<AnnouncementItem[]>([]);
+
+  const zonesRef = useRef(zones);
+  const sessionsRef = useRef(sessions);
+  const alertsRef = useRef(alerts);
+  const announcementsRef = useRef(announcements);
+
+  zonesRef.current = zones;
+  sessionsRef.current = sessions;
+  alertsRef.current = alerts;
+  announcementsRef.current = announcements;
 
   const channelRef = useRef<BroadcastChannel | null>(null);
 
@@ -235,10 +249,10 @@ export function ConvexClientProvider({ children }: { children: React.ReactNode }
     alerts?: AlertItem[];
     announcements?: AnnouncementItem[];
   }) => {
-    const currentAlerts = newState.alerts ?? alerts;
-    const currentAnnouncements = newState.announcements ?? announcements;
-    const currentZones = newState.zones ?? zones;
-    const currentSessions = newState.sessions ?? sessions;
+    const currentAlerts = newState.alerts ?? alertsRef.current;
+    const currentAnnouncements = newState.announcements ?? announcementsRef.current;
+    const currentZones = newState.zones ?? zonesRef.current;
+    const currentSessions = newState.sessions ?? sessionsRef.current;
 
     const payload = {
       zones: currentZones,
@@ -258,15 +272,14 @@ export function ConvexClientProvider({ children }: { children: React.ReactNode }
   };
 
   const triggerSos = async (lat: number, lng: number, tag: "initial" | "repeated" = "initial"): Promise<string> => {
-    // Calculate nearest zone
-    const zoneData = zones
+    const zoneData = zonesRef.current
       .filter(z => z.lat !== undefined && z.lng !== undefined)
       .map(z => ({ name: z.name, lat: z.lat!, lng: z.lng! }));
     
     const nearestZone = findNearestZone(lat, lng, zoneData);
     
     const newAlert: AlertItem = {
-      _id: `alert-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      _id: generateId("alert"),
       lat,
       lng,
       status: "open",
@@ -274,25 +287,25 @@ export function ConvexClientProvider({ children }: { children: React.ReactNode }
       createdAt: Date.now(),
       nearestZone,
     };
-    const updated = [newAlert, ...alerts];
+    const updated = [newAlert, ...alertsRef.current];
     setAlerts(updated);
     saveAndBroadcast({ alerts: updated });
     return newAlert._id;
   };
 
   const resolveAlert = async (id: string): Promise<void> => {
-    const updated = alerts.map((a) => (a._id === id ? { ...a, status: "resolved" as const } : a));
+    const updated = alertsRef.current.map((a) => (a._id === id ? { ...a, status: "resolved" as const } : a));
     setAlerts(updated);
     saveAndBroadcast({ alerts: updated });
   };
 
   const broadcastAnnouncement = async (message: string): Promise<string> => {
     const newAnn: AnnouncementItem = {
-      _id: `ann-${Date.now()}`,
+      _id: generateId("ann"),
       message,
       createdAt: Date.now(),
     };
-    const updated = [newAnn, ...announcements];
+    const updated = [newAnn, ...announcementsRef.current];
     setAnnouncements(updated);
     saveAndBroadcast({ announcements: updated });
     return newAnn._id;

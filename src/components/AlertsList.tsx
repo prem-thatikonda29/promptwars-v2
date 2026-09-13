@@ -75,9 +75,12 @@ function AlertGroupCard({ group, onResolve, onResolveAll }: {
   const openCount = group.alerts.filter((a) => a.status === "open").length;
 
   return (
-    <div className={`p-3 border-l-4 animate-fade-in ${
-      openCount > 0 ? "bg-[#FCE8E6]/60 border-l-[#D93025]" : "bg-[#F8F9FA] border-l-[#DADCE0]"
-    }`}>
+    <article 
+      className={`p-3 border-l-4 animate-fade-in ${
+        openCount > 0 ? "bg-[#FCE8E6]/60 border-l-[#D93025]" : "bg-[#F8F9FA] border-l-[#DADCE0]"
+      }`}
+      aria-label={`Emergency alert group: ${openCount > 0 ? 'active' : 'resolved'}`}
+    >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 flex-wrap">
@@ -89,7 +92,7 @@ function AlertGroupCard({ group, onResolve, onResolveAll }: {
 
             {isMulti && (
               <span className="text-[10px] font-bold bg-[#FEF7E0] text-[#B06000] border border-[#FDE293] px-1.5 py-0.5 rounded-full flex items-center gap-1">
-                <Layers className="w-3 h-3" /> {group.alerts.length} signals grouped
+                <Layers className="w-3 h-3" aria-hidden="true" /> {group.alerts.length} signals grouped
               </span>
             )}
 
@@ -100,13 +103,13 @@ function AlertGroupCard({ group, onResolve, onResolveAll }: {
             )}
 
             <span className="text-[11px] text-[#5F6368] font-mono flex items-center gap-1">
-              <Clock className="w-3 h-3 text-[#80868B]" />
+              <Clock className="w-3 h-3 text-[#80868B]" aria-hidden="true" />
               {timeAgo < 60 ? `${timeAgo}s ago` : `${Math.floor(timeAgo / 60)}m ago`}
             </span>
           </div>
 
           <p className="text-xs font-bold text-[#202124] flex items-center gap-1 font-mono mt-0.5">
-            <MapPin className="w-3.5 h-3.5 text-[#D93025]" />
+            <MapPin className="w-3.5 h-3.5 text-[#D93025]" aria-hidden="true" />
             GPS: {group.centroidLat.toFixed(6)}, {group.centroidLng.toFixed(6)}
             {isMulti && (
               <span className="text-[10px] text-[#80868B] font-sans font-normal ml-1">(centroid of {group.alerts.length} signals)</span>
@@ -114,7 +117,7 @@ function AlertGroupCard({ group, onResolve, onResolveAll }: {
           </p>
           {group.alerts[0]?.nearestZone && (
             <p className="text-xs font-semibold text-[#D93025] flex items-center gap-1 mt-1">
-              <span className="inline-block w-2 h-2 rounded-full bg-[#D93025]" />
+              <span className="inline-block w-2 h-2 rounded-full bg-[#D93025]" aria-hidden="true" />
               Nearest Zone: {group.alerts[0].nearestZone.name}
               <span className="text-[10px] text-[#5F6368] font-normal ml-1">
                 ({Math.round(group.alerts[0].nearestZone.distance)}m away)
@@ -123,7 +126,7 @@ function AlertGroupCard({ group, onResolve, onResolveAll }: {
           )}
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0" role="group" aria-label="Alert actions">
           {openCount > 0 && (
             <button
               onClick={() => {
@@ -131,8 +134,9 @@ function AlertGroupCard({ group, onResolve, onResolveAll }: {
                 onResolveAll(openIds);
               }}
               className="bg-[#188038] hover:bg-[#13652B] active:scale-95 text-white text-xs font-semibold px-3 py-1.5 rounded-md flex items-center justify-center gap-1 transition-all cursor-pointer"
+              aria-label={`Resolve all ${openCount} open alerts`}
             >
-              <CheckCircle2 className="w-3.5 h-3.5" />
+              <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
               <span>{isMulti ? `Resolve All (${openCount})` : "Mark Resolved"}</span>
             </button>
           )}
@@ -141,9 +145,10 @@ function AlertGroupCard({ group, onResolve, onResolveAll }: {
             <button
               onClick={() => setExpanded(!expanded)}
               className="text-xs text-[#5F6368] hover:text-[#202124] border border-[#DADCE0] bg-[#F8F9FA] hover:bg-[#E8EAED] p-1.5 rounded-md cursor-pointer transition-all"
-              title={expanded ? "Collapse" : "Expand individual signals"}
+              aria-label={expanded ? "Collapse individual signals" : "Expand individual signals"}
+              aria-expanded={expanded}
             >
-              {expanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              {expanded ? <ChevronUp className="w-3.5 h-3.5" aria-hidden="true" /> : <ChevronDown className="w-3.5 h-3.5" aria-hidden="true" />}
             </button>
           )}
         </div>
@@ -151,11 +156,11 @@ function AlertGroupCard({ group, onResolve, onResolveAll }: {
 
       {/* Expanded individual signal rows */}
       {expanded && isMulti && (
-        <div className="mt-2 pt-2 border-t border-[#E8EAED] flex flex-col gap-1">
+        <div className="mt-2 pt-2 border-t border-[#E8EAED] flex flex-col gap-1" role="list" aria-label="Individual signals">
           {group.alerts.map((alert, i) => (
-            <div key={alert._id} className="flex items-center justify-between text-[11px] text-[#5F6368] px-2 py-1 rounded bg-white border border-[#E8EAED]">
+            <div key={alert._id} className="flex items-center justify-between text-[11px] text-[#5F6368] px-2 py-1 rounded bg-white border border-[#E8EAED]" role="listitem">
               <div className="flex items-center gap-2 font-mono">
-                <span className={`w-1.5 h-1.5 rounded-full ${alert.status === "open" ? "bg-[#D93025]" : "bg-[#188038]"}`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${alert.status === "open" ? "bg-[#D93025]" : "bg-[#188038]"}`} aria-hidden="true" />
                 <span>#{i + 1} • {alert.lat.toFixed(4)}, {alert.lng.toFixed(4)}</span>
                 {alert.tag === "repeated" && (
                   <span className="text-[9px] bg-[#E8F0FE] text-[#1A73E8] px-1 rounded font-sans">follow-up</span>
@@ -169,6 +174,7 @@ function AlertGroupCard({ group, onResolve, onResolveAll }: {
                   <button
                     onClick={() => onResolve(alert._id)}
                     className="text-[10px] text-[#188038] hover:underline font-semibold cursor-pointer"
+                    aria-label={`Resolve alert #${i + 1}`}
                   >
                     Resolve
                   </button>
@@ -178,7 +184,7 @@ function AlertGroupCard({ group, onResolve, onResolveAll }: {
           ))}
         </div>
       )}
-    </div>
+    </article>
   );
 }
 
@@ -197,17 +203,17 @@ export function AlertsList() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="bg-white border border-[#DADCE0] rounded-xl p-4 flex flex-col gap-3 shadow-xs">
+      <section className="bg-white border border-[#DADCE0] rounded-xl p-4 flex flex-col gap-3 shadow-xs" aria-label="Emergency alerts feed">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E8EAED] pb-3">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-[#FCE8E6] text-[#D93025] rounded-md">
+            <div className="p-1.5 bg-[#FCE8E6] text-[#D93025] rounded-md" aria-hidden="true">
               <ShieldAlert className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-[#202124] tracking-tight">Live Emergency Dispatch Feed</h2>
-                <span className="flex items-center gap-1 text-[9px] font-mono font-bold bg-[#D93025] text-white px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse-live">
-                  <Radio className="w-3 h-3" /> Live
+                <span className="flex items-center gap-1 text-[9px] font-mono font-bold bg-[#D93025] text-white px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse-live" role="status">
+                  <Radio className="w-3 h-3" aria-hidden="true" /> Live
                 </span>
               </div>
               <p className="text-[11px] text-[#5F6368]">Grouped by proximity (50m) & time (3 min) • Nearby signals are auto-clustered</p>
@@ -216,8 +222,8 @@ export function AlertsList() {
         </div>
 
         {openGroups.length === 0 ? (
-          <div className="py-6 text-center bg-[#F8F9FA] rounded-lg border border-dashed border-[#DADCE0]">
-            <CheckCircle2 className="w-6 h-6 text-[#188038] mx-auto mb-1 opacity-80" />
+          <div className="py-6 text-center bg-[#F8F9FA] rounded-lg border border-dashed border-[#DADCE0]" role="status">
+            <CheckCircle2 className="w-6 h-6 text-[#188038] mx-auto mb-1 opacity-80" aria-hidden="true" />
             <p className="text-xs font-bold text-[#202124]">All Clear — No Active Emergencies</p>
             <p className="text-[11px] text-[#80868B] mt-0.5">
               Attendee SOS dispatches will appear in real-time without reloading.
@@ -226,17 +232,18 @@ export function AlertsList() {
         ) : (
           <div className="flex flex-col gap-2">
             <p className="text-xs font-bold text-[#D93025] uppercase tracking-wider flex items-center gap-1">
-              <AlertTriangle className="w-3.5 h-3.5" />
+              <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
               Active Emergencies — {openAlerts.length} signal{openAlerts.length !== 1 ? "s" : ""} in {openGroups.length} group{openGroups.length !== 1 ? "s" : ""}
             </p>
-            <div className="divide-y divide-[#E8EAED] border border-[#DADCE0] rounded-lg overflow-hidden bg-white">
+            <div className="divide-y divide-[#E8EAED] border border-[#DADCE0] rounded-lg overflow-hidden bg-white" role="list" aria-label="Active emergency alerts">
               {openGroups.map((group) => (
-                <AlertGroupCard
-                  key={group.id}
-                  group={group}
-                  onResolve={resolveAlert}
-                  onResolveAll={handleResolveAll}
-                />
+                <div role="listitem" key={group.id}>
+                  <AlertGroupCard
+                    group={group}
+                    onResolve={resolveAlert}
+                    onResolveAll={handleResolveAll}
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -247,11 +254,11 @@ export function AlertsList() {
             <p className="text-[10px] font-bold text-[#80868B] uppercase tracking-wider mb-1">
               Resolved Log ({resolvedAlerts.length})
             </p>
-            <div className="divide-y divide-[#E8EAED] border border-[#DADCE0] rounded-lg overflow-hidden bg-[#F8F9FA]">
+            <div className="divide-y divide-[#E8EAED] border border-[#DADCE0] rounded-lg overflow-hidden bg-[#F8F9FA]" role="list" aria-label="Resolved alerts">
               {resolvedAlerts.map((alert) => (
-                <div key={alert._id} className="p-2 px-3 flex items-center justify-between text-xs text-[#5F6368]">
+                <div key={alert._id} className="p-2 px-3 flex items-center justify-between text-xs text-[#5F6368]" role="listitem">
                   <span className="flex items-center gap-1.5 font-mono text-[11px]">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#188038]" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#188038]" aria-hidden="true" />
                     Resolved: {alert.lat.toFixed(4)}, {alert.lng.toFixed(4)}
                     {alert.nearestZone && (
                       <span className="text-[10px] font-sans font-semibold text-[#188038] ml-1">
@@ -270,7 +277,7 @@ export function AlertsList() {
             </div>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
