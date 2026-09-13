@@ -128,7 +128,7 @@ export function ZoneGrid() {
         {zones.map((zone) => {
           const config = getZoneConfig(zone.type);
           return (
-            <div key={zone._id || zone.id || zone.name} className="google-card flex flex-col justify-between gap-3">
+            <div key={zone._id || zone.id || zone.name} className="google-card flex flex-col justify-between gap-3 overflow-hidden">
               <div className="flex items-center justify-between">
                 <div className={`p-2 rounded-lg ${config.bg} ${config.border} border`}>
                   {config.icon}

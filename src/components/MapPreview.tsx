@@ -41,7 +41,7 @@ export function MapPreview({ zone, userLocation, onClick }: MapPreviewProps) {
 
   return (
     <div
-      className="w-full h-24 rounded-lg overflow-hidden cursor-pointer border border-[#DADCE0]"
+      className="w-full h-24 rounded-lg overflow-hidden cursor-pointer border border-[#DADCE0] relative z-0"
       onClick={onClick}
     >
       <MapContainer

@@ -112,9 +112,20 @@ h1, h2, h3, h4, h5, h6 {
 /* Leaflet map overrides */
 .leaflet-container {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  z-index: 1;
 }
 
 .user-location-marker {
   background: transparent;
   border: none;
+}
+
+/* Contain map previews within cards */
+.leaflet-pane {
+  z-index: 1;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1;
 }
