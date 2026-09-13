@@ -1,4 +1,5 @@
 import { mutation } from "./_generated/server";
+import { generateVenueCoordinates } from "../src/lib/venueCoordinates";
 
 export const seedData = mutation({
   handler: async (ctx) => {
@@ -12,30 +13,49 @@ export const seedData = mutation({
       await ctx.db.delete(s._id);
     }
 
-    // Insert 6 zones
+    // Default venue location (San Francisco Convention Center)
+    const defaultVenueLat = 37.7849;
+    const defaultVenueLng = -122.4004;
+
+    // Generate zone coordinates in a fixed distance ring pattern
+    const venueCoords = generateVenueCoordinates(defaultVenueLat, defaultVenueLng);
+
+    // Insert 6 zones with coordinates
     const mainStageId = await ctx.db.insert("zones", {
       name: "Main Stage",
       type: "stage",
+      lat: venueCoords[0].lat,
+      lng: venueCoords[0].lng,
     });
     const workshopRoomId = await ctx.db.insert("zones", {
       name: "Workshop Room A",
       type: "stage",
+      lat: venueCoords[1].lat,
+      lng: venueCoords[1].lng,
     });
     const foodCourtId = await ctx.db.insert("zones", {
       name: "Central Food Court",
       type: "foodcourt",
+      lat: venueCoords[2].lat,
+      lng: venueCoords[2].lng,
     });
     const restroomsId = await ctx.db.insert("zones", {
       name: "East Restrooms",
       type: "restroom",
+      lat: venueCoords[3].lat,
+      lng: venueCoords[3].lng,
     });
     const helpDeskId = await ctx.db.insert("zones", {
       name: "Info & Help Desk",
       type: "helpdesk",
+      lat: venueCoords[4].lat,
+      lng: venueCoords[4].lng,
     });
     const firstAidId = await ctx.db.insert("zones", {
       name: "Medical & First Aid",
       type: "firstaid",
+      lat: venueCoords[5].lat,
+      lng: venueCoords[5].lng,
     });
 
     // Insert 8 sessions with interest tags

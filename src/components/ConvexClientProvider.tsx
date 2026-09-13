@@ -22,6 +22,8 @@ const DEFAULT_ZONES: Zone[] = [
     id: "zone-1",
     name: "Main Stage — Keynote Arena",
     type: "session",
+    lat: 37.7849,
+    lng: -122.4004,
     density: "high",
     headcountEstimate: 420,
     capacity: 500,
@@ -32,6 +34,8 @@ const DEFAULT_ZONES: Zone[] = [
     id: "zone-2",
     name: "Expo & Networking Hub",
     type: "networking",
+    lat: 37.7855,
+    lng: -122.3998,
     density: "medium",
     headcountEstimate: 180,
     capacity: 350,
@@ -42,6 +46,8 @@ const DEFAULT_ZONES: Zone[] = [
     id: "zone-3",
     name: "Catering & Coffee Lounge",
     type: "food",
+    lat: 37.7849,
+    lng: -122.3985,
     density: "packed",
     headcountEstimate: 290,
     capacity: 300,
@@ -52,6 +58,8 @@ const DEFAULT_ZONES: Zone[] = [
     id: "zone-4",
     name: "Developer Workshop Lab A",
     type: "session",
+    lat: 37.7842,
+    lng: -122.3998,
     density: "low",
     headcountEstimate: 45,
     capacity: 120,
@@ -109,6 +117,8 @@ function ConvexQueryProvider({ children }: { children: React.ReactNode }) {
         id: z._id,
         name: z.name,
         type: z.type as ZoneType,
+        lat: z.lat,
+        lng: z.lng,
       }));
     }
     return zones;
@@ -128,6 +138,8 @@ function ConvexQueryProvider({ children }: { children: React.ReactNode }) {
           id: s.zone._id,
           name: s.zone.name,
           type: s.zone.type as ZoneType,
+          lat: s.zone.lat,
+          lng: s.zone.lng,
         } : null,
         tags: s.tags,
       }));

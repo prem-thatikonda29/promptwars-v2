@@ -5,6 +5,8 @@ export interface Zone {
   id?: string;
   name: string;
   type: ZoneType;
+  lat: number;
+  lng: number;
   density?: "low" | "medium" | "high" | "packed";
   headcountEstimate?: number;
   capacity?: number;

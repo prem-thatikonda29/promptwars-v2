@@ -1,7 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useSmartEventStore, ZoneType } from "./ConvexClientProvider";
+import { Zone } from "@/types";
 import {
   Sparkles,
   Utensils,
@@ -9,7 +11,11 @@ import {
   HelpCircle,
   HeartPulse,
   MapPin,
+  Navigation,
 } from "lucide-react";
+
+const MapPreview = dynamic(() => import("./MapPreview").then(mod => ({ default: mod.MapPreview })), { ssr: false });
+const ZoneMapModal = dynamic(() => import("./ZoneMapModal").then(mod => ({ default: mod.ZoneMapModal })), { ssr: false });
 
 const getZoneConfig = (type: ZoneType) => {
   switch (type) {
@@ -66,6 +72,39 @@ const getZoneConfig = (type: ZoneType) => {
 
 export function ZoneGrid() {
   const { zones } = useSmartEventStore();
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        () => {
+          // Use default location if geolocation fails
+          setUserLocation({ lat: 37.7849, lng: -122.4004 });
+        },
+        { timeout: 5000 }
+      );
+    } else {
+      setUserLocation({ lat: 37.7849, lng: -122.4004 });
+    }
+  }, []);
+
+  const handleZoneClick = (zone: Zone) => {
+    setSelectedZone(zone);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedZone(null);
+  };
 
   return (
     <div className="flex flex-col gap-2.5">
@@ -100,10 +139,36 @@ export function ZoneGrid() {
                   Open & Operational
                 </p>
               </div>
+
+              {/* Map Preview */}
+              <MapPreview
+                zone={zone}
+                userLocation={userLocation || undefined}
+                onClick={() => handleZoneClick(zone)}
+              />
+
+              {/* View Map Button */}
+              <button
+                onClick={() => handleZoneClick(zone)}
+                className="flex items-center justify-center gap-2 w-full px-3 py-2 text-xs font-semibold text-[#1A73E8] bg-[#E8F0FE] hover:bg-[#D2E3FC] border border-[#D2E3FC] rounded-lg transition-colors cursor-pointer"
+              >
+                <Navigation className="w-3.5 h-3.5" />
+                View Map & Directions
+              </button>
             </div>
           );
         })}
       </div>
+
+      {/* Zone Map Modal */}
+      {selectedZone && (
+        <ZoneMapModal
+          zone={selectedZone}
+          userLocation={userLocation || undefined}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 }
