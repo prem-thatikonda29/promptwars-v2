@@ -11,8 +11,8 @@ export default defineSchema({
       v.literal("helpdesk"),
       v.literal("firstaid")
     ),
-    lat: v.number(),
-    lng: v.number(),
+    lat: v.optional(v.number()),
+    lng: v.optional(v.number()),
   }),
 
   sessions: defineTable({
