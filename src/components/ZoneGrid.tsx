@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useSmartEventStore, ZoneType } from "./ConvexClientProvider";
 import { Zone } from "@/types";
 import {
@@ -12,6 +13,7 @@ import {
   HeartPulse,
   MapPin,
   Navigation,
+  Calendar,
 } from "lucide-react";
 
 const MapPreview = dynamic(() => import("./MapPreview").then(mod => ({ default: mod.MapPreview })), { ssr: false });
@@ -113,9 +115,13 @@ export function ZoneGrid() {
           <MapPin className="w-4 h-4 text-[#1A73E8]" />
           <h2 className="text-base font-bold text-[#202124] tracking-tight">Venue Zones</h2>
         </div>
-        <span className="text-[11px] font-mono text-[#5F6368] bg-[#F1F3F4] border border-[#DADCE0] px-2 py-0.5 rounded-full font-medium">
-          {zones.length} Active Zones
-        </span>
+        <Link
+          href="/schedule"
+          className="flex items-center gap-1.5 text-xs font-semibold text-[#1A73E8] bg-[#E8F0FE] hover:bg-[#D2E3FC] border border-[#D2E3FC] px-3 py-1.5 rounded-full transition-colors cursor-pointer"
+        >
+          <Calendar className="w-3.5 h-3.5" />
+          View Schedule
+        </Link>
       </div>
 
       <div className="google-bento-grid">
